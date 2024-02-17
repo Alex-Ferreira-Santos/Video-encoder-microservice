@@ -1,20 +1,15 @@
 module github.com/alex-ferreira-santos/encoder
 
-go 1.21.5
-
-require github.com/lib/pq v1.10.9
+go 1.13
 
 require (
-	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/jinzhu/gorm v1.9.16 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/mattn/go-sqlite3 v1.14.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/satori/go.uuid v1.2.0 // indirect
-	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
-	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	cloud.google.com/go/storage v1.9.0
+	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
+	github.com/jinzhu/gorm v1.9.12
+	github.com/joho/godotenv v1.3.0
+	github.com/lib/pq v1.1.1
+	github.com/satori/go.uuid v1.2.0
+	github.com/sirupsen/logrus v1.9.3
+	github.com/streadway/amqp v1.0.0
+	github.com/stretchr/testify v1.7.0
 )
