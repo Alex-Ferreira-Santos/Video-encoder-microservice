@@ -2,7 +2,7 @@ package database
 
 import (
 	"log"
-
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/alex-ferreira-santos/encoder/domain"
 	"github.com/jinzhu/gorm"
 )
@@ -50,7 +50,7 @@ func (database *Database) Connect() (*gorm.DB, error) {
 	}
 
 	if err != nil {
-		return nil ,err
+		return nil, err
 	}
 
 	if database.Debug {
@@ -59,6 +59,7 @@ func (database *Database) Connect() (*gorm.DB, error) {
 
 	if database.AutoMigrateDb {
 		database.Db.AutoMigrate(&domain.Video{}, &domain.Job{})
+		database.Db.Model(domain.Job{}).AddForeignKey("video_id", "videos (id)", "CASCADE", "CASCADE")
 	}
 
 	return database.Db, nil
