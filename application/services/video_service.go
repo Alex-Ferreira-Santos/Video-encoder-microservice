@@ -21,6 +21,10 @@ func NewVideoService() VideoService {
 	return VideoService{}
 }
 
+func (videoService *VideoService) getVideoPath() string {
+	return os.Getenv("localStoragePath") + "/" + videoService.Video.ID
+}
+
 func (videoService *VideoService) Download(bucketName string) error {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
@@ -46,7 +50,7 @@ func (videoService *VideoService) Download(bucketName string) error {
 		return err
 	}
 
-	file, err := os.Create(os.Getenv("localStoragePath") + "/" + videoService.Video.ID + ".mp4")
+	file, err := os.Create(videoService.getVideoPath() + ".mp4")
 
 	if err != nil {
 		return err
@@ -66,15 +70,14 @@ func (videoService *VideoService) Download(bucketName string) error {
 }
 
 func (videoService *VideoService) Fragment() error {
-	videoPath := os.Getenv("localStoragePath") + "/" + videoService.Video.ID
-	err := os.Mkdir(videoPath, os.ModePerm)
+	err := os.Mkdir(videoService.getVideoPath(), os.ModePerm)
 
 	if err != nil {
 		return err
 	}
 
-	source := videoPath + ".mp4"
-	target := videoPath + ".frag"
+	source := videoService.getVideoPath() + ".mp4"
+	target := videoService.getVideoPath() + ".frag"
 
 	cmd := exec.Command("mp4fragment", source, target)
 	output, err := cmd.CombinedOutput()
@@ -84,6 +87,53 @@ func (videoService *VideoService) Fragment() error {
 	}
 
 	printOutput(output)
+
+	return nil
+}
+
+func (videoService *VideoService) Encode() error {
+	cmdArg := []string{}
+	cmdArg = append(cmdArg, videoService.getVideoPath()+".frag")
+	cmdArg = append(cmdArg, "--use-segment-timeline")
+	cmdArg = append(cmdArg, "-o")
+	cmdArg = append(cmdArg, videoService.getVideoPath())
+	cmdArg = append(cmdArg, "-f")
+	cmdArg = append(cmdArg, "--exec-dir")
+	cmdArg = append(cmdArg, "/opt/bento4/bin/")
+
+	cmd := exec.Command("mp4dash", cmdArg...)
+
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		return err
+	}
+
+	printOutput(output)
+
+	return nil
+}
+
+func (videoService *VideoService) Finish() error {
+	err := os.Remove(videoService.getVideoPath() + ".mp4")
+	if err != nil {
+		log.Println("Error removing mp4 ", videoService.Video.ID, ".mp4")
+		return err
+	}
+
+	err = os.Remove(videoService.getVideoPath() + ".frag")
+	if err != nil {
+		log.Println("Error removing frag ", videoService.Video.ID, ".frag")
+		return err
+	}
+
+	err = os.RemoveAll(videoService.getVideoPath())
+	if err != nil {
+		log.Println("Error removing frag ", videoService.Video.ID, ".frag")
+		return err
+	}
+
+	log.Println("files have been removed ", videoService.Video.ID)
 
 	return nil
 }
