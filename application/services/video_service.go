@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 
 	"cloud.google.com/go/storage"
 	"github.com/alex-ferreira-santos/encoder/application/repositories"
@@ -62,4 +63,33 @@ func (videoService *VideoService) Download(bucketName string) error {
 	log.Printf("video %v has been stored", videoService.Video.ID)
 
 	return nil
+}
+
+func (videoService *VideoService) Fragment() error {
+	videoPath := os.Getenv("localStoragePath") + "/" + videoService.Video.ID
+	err := os.Mkdir(videoPath, os.ModePerm)
+
+	if err != nil {
+		return err
+	}
+
+	source := videoPath + ".mp4"
+	target := videoPath + ".frag"
+
+	cmd := exec.Command("mp4fragment", source, target)
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		return err
+	}
+
+	printOutput(output)
+
+	return nil
+}
+
+func printOutput(out []byte) {
+	if len(out) > 0 {
+		log.Printf("=======> Output: %s\n", string(out))
+	}
 }
