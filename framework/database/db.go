@@ -3,6 +3,7 @@ package database
 import (
 	"log"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/lib/pq"
 	"github.com/alex-ferreira-santos/encoder/domain"
 	"github.com/jinzhu/gorm"
 )
@@ -24,7 +25,7 @@ func NewDb() *Database {
 
 func NewDbTest() *gorm.DB {
 	dbInstance := NewDb()
-	dbInstance.Env = "Test"
+	dbInstance.Env = "test"
 	dbInstance.DbTypeTest = "sqlite3"
 	dbInstance.DsnTest = ":memory:"
 	dbInstance.AutoMigrateDb = true
@@ -42,10 +43,10 @@ func NewDbTest() *gorm.DB {
 func (database *Database) Connect() (*gorm.DB, error) {
 	var err error
 
-	if database.Env != "Test" {
+	if database.Env != "test" {
 		database.Db, err = gorm.Open(database.DbType, database.Dsn)
 	}
-	if database.Env == "Test" {
+	if database.Env == "test" {
 		database.Db, err = gorm.Open(database.DbTypeTest, database.DsnTest)
 	}
 
