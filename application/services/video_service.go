@@ -14,7 +14,7 @@ import (
 
 type VideoService struct {
 	Video           *domain.Video
-	VideoRepository *repositories.IVideoRepository
+	VideoRepository repositories.IVideoRepository
 }
 
 func NewVideoService() VideoService {

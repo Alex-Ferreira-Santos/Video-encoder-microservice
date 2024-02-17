@@ -21,7 +21,6 @@ func TestNewVideoRepositoryDbInsert(t *testing.T) {
 	video.CreatedAt = time.Now()
 
 	repo := repositories.VideoRepositoryDB{Db: db}
-
 	repo.Insert(video)
 
 	v, err := repo.Find(video.ID)
