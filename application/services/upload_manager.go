@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"cloud.google.com/go/storage"
+	"google.golang.org/api/option"
 )
 
 type VideoUpload struct {
@@ -34,7 +35,7 @@ func (videoUpload *VideoUpload) UploadObject(objectPath string, client *storage.
 	defer file.Close()
 
 	writterClient := client.Bucket(videoUpload.OutputBucket).Object(path[1]).NewWriter(ctx)
-	writterClient.ACL = []storage.ACLRule{{Entity: storage.AllUsers, Role: storage.RoleReader}}
+	// writterClient.ACL = []storage.ACLRule{{Entity: storage.AllAuthenticatedUsers, Role: storage.RoleReader}}
 
 	if _, err = io.Copy(writterClient, file); err != nil {
 		return err
@@ -114,12 +115,12 @@ func (videoUpload *VideoUpload) uploadWorker(in chan int, returnChan chan string
 		returnChan <- ""
 	}
 
-	returnChan <- "uploaded completed"
+	returnChan <- "upload completed"
 }
 
 func getClientUpload() (*storage.Client, context.Context, error) {
 	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile("/go/src/bucket-credential.json"))
 	if err != nil {
 		return nil, nil, err
 	}

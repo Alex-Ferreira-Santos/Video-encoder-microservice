@@ -10,6 +10,7 @@ import (
 	"cloud.google.com/go/storage"
 	"github.com/alex-ferreira-santos/encoder/application/repositories"
 	"github.com/alex-ferreira-santos/encoder/domain"
+	"google.golang.org/api/option"
 )
 
 type VideoService struct {
@@ -27,7 +28,7 @@ func (videoService *VideoService) getVideoPath() string {
 
 func (videoService *VideoService) Download(bucketName string) error {
 	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile("/go/src/bucket-credential.json"))
 
 	if err != nil {
 		return err
