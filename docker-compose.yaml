@@ -9,7 +9,6 @@ services:
   db: 
     container_name: db
     image: postgres:9.4
-    restart: always
     tty: true
     volumes:
       - .pgdata:/var/lib/postgresql/data
