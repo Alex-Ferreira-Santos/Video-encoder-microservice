@@ -91,5 +91,5 @@ func (jobService *JobService) failJob(error error) error {
 		return err
 	}
 
-	return nil
+	return error
 }
